@@ -11,9 +11,10 @@ import { ForgotPage } from './forgot/forgot';
 import { ForgotConfirmPage } from './forgot-confirm/forgot-confirm';
 import { TabsPage } from './tabs/tabs';
 import { EditProfilePage } from './edit-profile/edit-profile';
+import { SearchPage } from './search/search';
 
 export const AppPages = [
-    ChangePasswordPage,ForgotPage,ForgotConfirmPage,HomePage,LoginPage,ProfilePage,SignupPage,SignupconfirmPage,WelcomePage,TabsPage, EditProfilePage
+    ChangePasswordPage,ForgotPage,ForgotConfirmPage,HomePage,LoginPage,ProfilePage,SignupPage,SignupconfirmPage,WelcomePage,TabsPage, EditProfilePage, SearchPage
 ];
 
 export const MainPage = WelcomePage;
