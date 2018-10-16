@@ -1,66 +1,51 @@
-import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
-import { ChatsPage } from '../pages/chats/chats';
-import { ProfilePage } from '../pages/profile/profile';
-import { JobsPage } from '../pages/jobs/jobs';
-import { TabsPage } from '../pages/tabs/tabs';
-import { MyJobsPage } from '../pages/myjobs/myjobs';
-import { LoginPage } from '../pages/login/login';
-import { SignUpPage } from '../pages/signup/signup';
-
-import { StatusBar } from '@ionic-native/status-bar';
+import { ErrorHandler, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { BrMaskerModule } from 'brmasker-ionic-3';
 
-import { AngularFireModule } from 'angularfire2';
-import { Router } from '@angular/router';
 
-import { AuthService } from '../providers/auth-service';
-
-/*YOU HAVE TO PUT YOUR APIKEY FROM YOUR FIREBASE COUNT*/
-
-export const firebaseConfig = {
-    apiKey: "AIzaSyAqGU8ArI3iuUEdtBR8-8WWsFvm4_AkokI",
-    authDomain: "studer-aa654.firebaseapp.com",
-    databaseURL: "https://studer-aa654.firebaseio.com/",
-    projectId: "studer-aa654",
-    storageBucket: "gs://studer-aa654.appspot.com",
-    messagingSenderId: "379553254767"
-};
+import { MyApp } from './app.component';
+import { AppPages } from '../pages/pages.module';
+import { CommonModule } from '../common/common.module';
+import { ComponentsModule } from '../components/components.module';
+import { IonicStorageModule } from '@ionic/storage';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
   declarations: [
     MyApp,
-    ChatsPage,
-    ProfilePage,
-    JobsPage,
-    MyJobsPage,
-    LoginPage,
-    SignUpPage,
-    TabsPage
+    AppPages
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
-    AngularFireModule.initializeApp(firebaseConfig)
+    BrMaskerModule,
+    CommonModule,
+    ComponentsModule,
+    PipesModule,
+    IonicModule.forRoot(MyApp, {
+      platforms: {
+        ios: {
+          statusbarPadding: true
+        }
+      }
+    }),
+    IonicStorageModule.forRoot({
+      name:'__ionic-aws-cognito-app',
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    ChatsPage,
-    ProfilePage,
-    JobsPage,
-    MyJobsPage,
-    LoginPage,
-    SignUpPage,
-    TabsPage
+    AppPages
   ],
   providers: [
-    AuthService,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
-  ]
+  ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {}

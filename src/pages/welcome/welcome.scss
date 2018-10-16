@@ -1,0 +1,28 @@
+page-welcome {
+    .welcome-bkg {
+        background: url('../assets/img/waves_bkg.jpg');
+        background-size: contain;
+
+        img {
+            margin-top: 100px !important;
+            width: 100px;
+        }
+    }
+
+    .slogan {
+
+        h1 {
+            margin-top: 80px !important;
+            text-transform: uppercase; 
+        }
+    }
+
+    .splash-btn {
+        bottom: 30px;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        transform: perspective(1px) translate(-1.5%);
+    }
+
+}

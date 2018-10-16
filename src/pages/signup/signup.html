@@ -1,37 +1,92 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Sign Up</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
 <ion-content padding>
-
-  <ion-img src="assets/img/logofindjob.png"></ion-img>
-
-  <!--Search graphic by <a href="http://www.flaticon.com/authors/icomoon">Icomoon</a> from <a href="http://www.flaticon.com/">Flaticon</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>. Made with <a href="http://logomakr.com" title="Logo Maker">Logo Maker</a>-->
-  
-  <form id="login-form" #formData='ngForm' (ngSubmit)="onSubmit(formData)">
-    
-    <ion-list>
-
-      <ion-item>
-        <input type="text" id="email" placeholder="Email" (ngModel)="email" name="email" class="txt" required>
-      </ion-item>
-
-      <ion-item>
-        <input type="password" id="password" placeholder="Password" (ngModel)="password" name="password" class="txt" required>
-      </ion-item>
-
-      <ion-item>
-        <input type="password" id="repeat-password" placeholder="Repeat password" (ngModel)="repeatpassword" name="repeatpassword" class="txt" required>
-      </ion-item>
-
-    </ion-list>
-
-    <div class="row" id="row-btn-1">
-      <ion-col col-12 id="col-btn-mail">
-        <button ion-button color="secondary" id="loginBtn" type="submit" [disabled]="!formData.valid">Register</button>
-      </ion-col>
+  <form [formGroup]="signupForm">
+    <ion-item>
+      <ion-label floating>First Name</ion-label>
+      <ion-input formControlName="given_name" type="text"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['given_name'].valid && signupForm.controls['given_name'].errors && signupForm.controls['given_name'].touched">
+      <p class="error" *ngIf="signupForm.controls['given_name'].errors.required">{{ validation_messages.given_name[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['given_name'].errors.pattern">{{ validation_messages.given_name[1].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['given_name'].errors.minlength">{{ validation_messages.given_name[2].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['given_name'].errors.maxlength">{{ validation_messages.given_name[3].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Last Name</ion-label>
+      <ion-input formControlName="family_name" type="text"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['family_name'].valid && signupForm.controls['family_name'].errors && signupForm.controls['family_name'].touched">
+      <p class="error" *ngIf="signupForm.controls['family_name'].errors.required">{{ validation_messages.family_name[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['family_name'].errors.pattern">{{ validation_messages.family_name[1].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['family_name'].errors.minlength">{{ validation_messages.family_name[2].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['family_name'].errors.maxlength">{{ validation_messages.family_name[3].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Username</ion-label>
+      <ion-input formControlName="username" type="text" autocapitalize="none"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['username'].valid && signupForm.controls['username'].errors && signupForm.controls['username'].touched">
+      <p class="error" *ngIf="signupForm.controls['username'].errors.required">{{ validation_messages.username[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['username'].errors.pattern">{{ validation_messages.username[1].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['username'].errors.minlength">{{ validation_messages.username[2].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['username'].errors.maxlength">{{ validation_messages.username[3].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['email'].valid && signupForm.controls['email'].errors && signupForm.controls['email'].touched">
+      <p class="error" *ngIf="signupForm.controls['email'].errors.required">{{ validation_messages.email[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['email'].errors.email">{{ validation_messages.email[1].message }}</p>
+    </ion-item>
+    <phone-number formControlName="phone_number" [countries]="countries" [countryCode]="signupForm.controls['country_code__c']"></phone-number>
+    <ion-item *ngIf="!signupForm.controls['phone_number'].valid && signupForm.controls['phone_number'].errors && signupForm.controls['phone_number'].touched">
+      <p class="error" *ngIf="signupForm.controls['phone_number'].errors.required">{{ validation_messages.phone_number[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['phone_number'].errors.validCountryPhone">{{ validation_messages.phone_number[1].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Birthday</ion-label>
+      <ion-datetime formControlName="birthdate" displayFormat="MM/DD/YYYY"></ion-datetime>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['birthdate'].valid && signupForm.controls['birthdate'].errors && signupForm.controls['birthdate'].touched">
+      <p class="error" *ngIf="signupForm.controls['birthdate'].errors.required">{{ validation_messages.birthdate[0].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input formControlName="password" type="password" validateEqual="confirmPassword" reverse="true"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['password'].valid && signupForm.controls['password'].errors && signupForm.controls['password'].touched">
+      <p class="error" *ngIf="signupForm.controls['password'].errors.required">{{ validation_messages.password[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['password'].errors.minlength">{{ validation_messages.password[1].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['password'].errors.pattern">{{ validation_messages.password[2].message }}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Confirm Password</ion-label>
+      <ion-input formControlName="confirmPassword" type="password" validateEqual="password" reverse="false"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!signupForm.controls['confirmPassword'].valid && signupForm.controls['confirmPassword'].errors && signupForm.controls['confirmPassword'].touched">
+      <p class="error" *ngIf="signupForm.controls['confirmPassword'].errors.required">{{ validation_messages.confirmPassword[0].message }}</p>
+      <p class="error" *ngIf="signupForm.controls['confirmPassword'].errors.validateEqual">{{ validation_messages.confirmPassword[1].message }}</p>
+    </ion-item>
+    <div padding>
+      <button ion-button block color="primary" class="signup" (click)="signUp()" [disabled]="!signupForm.valid">Sign Up</button>
     </div>
-    
+    <div padding text-center>
+      Already a member?
+      <a (click)='goToLogin()'>
+        <strong>
+          Login
+        </strong>
+      </a>
+    </div>
   </form>
-
-  
-
-  <button ion-button clear (click)="goLogin()">I have account yet</button>
-
 </ion-content>

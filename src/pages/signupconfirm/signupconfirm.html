@@ -1,0 +1,31 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Sign Up Confirmation</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div text-center>
+    Please enter the verification code that you recieved via email.
+  </div>
+  <form [formGroup]="confirmForm">
+    <ion-item>
+      <ion-label floating>Confirmation Code</ion-label>
+      <ion-input formControlName="confirmationCode" type="text" autocapitalize="none"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!confirmForm.controls['confirmationCode'].valid && (confirmForm.controls['confirmationCode'].dirty || submitAttempt)">
+        <p class="error" *ngIf="confirmForm.controls['confirmationCode'].errors.required">{{ validation_messages.confirmationCode[0].message }}</p>
+        <p class="error" *ngIf="confirmForm.controls['confirmationCode'].errors.minlength">{{ validation_messages.confirmationCode[1].message }}</p>
+    </ion-item>
+    <div padding>
+        <button ion-button block color="primary" class="login" (click)="confirm()">Submit Code</button>
+    </div>
+    <div class="or rounded-x">Or</div>
+    <div padding>
+        <button ion-button block color="primary" (click)="resend()">Resend Code</button>
+    </div>
+  </form>
+</ion-content>

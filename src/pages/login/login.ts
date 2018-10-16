@@ -1,131 +1,103 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { NavController, AlertController, LoadingController } from 'ionic-angular';
-import { AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
-import { TabsPage } from '../tabs/tabs';
-import { SignUpPage } from '../signup/signup';
+import { Component, OnInit } from '@angular/core';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { HomePage, ForgotPage } from '../pages.module';
+import { ICognitoException, ICognitoCredentials } from '../../aws/aws.module';
+import { BusinessService } from '../../common/common.module';
 
+
+
+@IonicPage()
 @Component({
   selector: 'page-login',
-  templateUrl: 'login.html'
+  templateUrl: 'login.html',
 })
-export class LoginPage implements OnInit{
-	root:any;
-  splash = true;
-  secondPage = LoginPage;
+export class LoginPage {
 
-  constructor(public navCtrl: NavController,public af: AngularFire, public element: ElementRef, public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
-  	window.localStorage.removeItem('user');
-  	this.element.nativeElement
+  loginForm: FormGroup;
+  validation_messages: any;
+  submitAttempt: boolean = false;
+
+  constructor(private businessService: BusinessService, private fb: FormBuilder, private loadingController: LoadingController, 
+              private toastController: ToastController, public navCtrl: NavController, public navParams: NavParams) {
+    
   }
 
-  ionViewDidLoad() {
-    setTimeout(() => {
-      this.splash = false;
-    }, 4000);
-  }
-
- ngOnInit(){
- 	this.root = this.element.nativeElement;
- }
-
- onClick(){
- 	console.log('logging in with email and password');
- 	let self = this;
- 	let email:string = this.root.querySelector('#email').value;
- 	let password:string = this.root.querySelector('#password').value;
- 	this.af.auth.login({
- 		email: email,
- 		password: password
- 	},{
-		provider: AuthProviders.Password,
- 		method: AuthMethods.Password,
- 	}).then(function(response){
-     self.loadingCtrl.create({
-        content: '<ion-spinner name="crescent"></ion-spinner> Please wait...',
-        duration: 8000,
-        dismissOnPageChange: true
-      }).present();
- 		self.navCtrl.push(TabsPage);
- 	}).catch(function(error){
-     self.alertCtrl.create({
-        title: 'Login failed',
-        subTitle: 'Email or Password is incorrect',
-        buttons: ['Ok']
-      }).present();
- 		console.log('error');
- 	});
- }
-
- onTwitterLogin(){
+  buildForm() {
     let self = this;
-    this.af.auth.login({
-      provider: AuthProviders.Twitter,
-      method: AuthMethods.Popup
-    }).then(function(response){
-      let user = {
-        email:response.auth.email,
-        picture:response.auth.photoURL
-      };
-      window.localStorage.setItem('user',JSON.stringify(user));
-      self.navCtrl.push(TabsPage);
-    }).catch(function(error){
-      console.log(error);
-    });
+
+    self.validation_messages = {
+      'username': [
+        { type: 'required', message: 'Username is required' },
+        { type: 'minlength', message: 'Username must be at least 5 characters long' },
+        { type: 'maxlength', message: 'Username cannot be more than 25 characters long' },
+        { type: 'pattern', message: 'Username must contain only numbers and letters' }
+      ],
+      'password': [
+        { type: 'required', message: 'Password is required' }
+      ]
+    };
+
+    self.loginForm = self.fb.group({
+      username: ['', Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(25)])],
+      password: ['', Validators.compose([Validators.required])]
+    }, { updatedOn: 'blur'});
+
   }
 
-  /*onFacebookLogin(){
+  goToForgot() {
+    this.navCtrl.push(ForgotPage);
+  }
+
+  ionViewDidLoad() { }
+
+  ngOnInit() {
     let self = this;
-    this.af.auth.login({
-      provider: AuthProviders.Facebook,
-      method: AuthMethods.Popup
-    }).then(function(response){
-      let user = {
-        email:response.auth.email,
-        picture:response.auth.photoURL
-      };
-      window.localStorage.setItem('user',JSON.stringify(user));
-      self.navCtrl.push(TabsPage);
-    }).catch(function(error){
-      console.log(error);
-    });
-  }*/
 
-  onFacebookLogin() {
-    this.af.auth.login({
-      provider: AuthProviders.Facebook,
-      method: AuthMethods.Popup
-    }).then((response) => {
-      console.log('Login success with facebook' + JSON.stringify(response));
-      let currentuser = {
-          email: response.auth.displayName,
-          picture: response.auth.photoURL
-        };
-        window.localStorage.setItem('currentuser', JSON.stringify(currentuser));
-        this.navCtrl.push(TabsPage);
-      }).catch((error) => {
-        console.log(error);
-    })
+    self.buildForm();
   }
 
-   onGoogleLogin(){
+  login() {
     let self = this;
-    this.af.auth.login({
-      provider: AuthProviders.Google,
-      method: AuthMethods.Popup
-    }).then(function(response){
-      let user = {
-        email:response.auth.email,
-        picture:response.auth.photoURL
-      };
-      window.localStorage.setItem('user',JSON.stringify(user));
-      self.navCtrl.push(TabsPage);
-    }).catch(function(error){
-      console.log(error);
-    });
-  }
 
- public goSignUp() {
-   	this.navCtrl.push(SignUpPage);
+    self.submitAttempt = true;
+
+    let toast = self.toastController.create({
+      duration: 5000,
+      position: 'bottom'
+    });
+
+    if (self.loginForm.valid) {
+      let loader = self.loadingController.create({
+        showBackdrop: false,
+        spinner: 'dots'
+      });
+
+      let creds: ICognitoCredentials = self.loginForm.value;
+
+      loader.present()
+      .then(async () => {
+        await self.businessService.signIn(creds)
+        .then((resp) => {
+          self.loginForm.reset();
+          loader.dismiss();
+        })
+        .then(() => {
+          self.navCtrl.setRoot(HomePage);
+        })
+        .catch((error: ICognitoException) => {
+          console.log('error', error);
+          loader.dismiss();
+          toast.setMessage(error.message);
+          toast.present();
+        });
+      }, () => {
+        loader.dismiss();
+      });
+    }
+    else {
+
+    }
   }
 
 }

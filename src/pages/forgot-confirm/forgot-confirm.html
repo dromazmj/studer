@@ -1,0 +1,48 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Forgot Confirm</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div text-center>
+    Please enter your username, password and the verification code that you received via email.
+  </div>
+  <form [formGroup]="forgotConfirmForm">
+    <ion-item>
+      <ion-label floating>Username</ion-label>
+      <ion-input formControlName="username" type="text" autocapitalize="none"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!forgotConfirmForm.controls['username'].valid && (forgotConfirmForm.controls['username'].dirty || submitAttempt)">
+      <p class="error">Please enter a valid username.</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>verification Code</ion-label>
+      <ion-input formControlName="verificationCode" type="text" autocapitalize="none"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!forgotConfirmForm.controls['verificationCode'].valid && (forgotConfirmForm.controls['verificationCode'].dirty || submitAttempt)">
+      <p class="error">Please enter a valid verification code.</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" formControlName="password" validateEqual="confirmPassword" reverse="true"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!forgotConfirmForm.controls['password'].valid && (forgotConfirmForm.controls['password'].dirty || submitAttempt)">
+      <p class="error">Please enter a valid password.</p>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Confirm Password</ion-label>
+      <ion-input type="password" formControlName="confirmPassword" validateEqual="password" reverse="false"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="forgotConfirmForm.controls['confirmPassword'].errors && (forgotConfirmForm.controls['confirmPassword'].dirty || submitAttempt)">
+      <p *ngIf="forgotConfirmForm.controls['confirmPassword'].errors.required" class="error">Please retype the password above.</p>
+      <p *ngIf="!forgotConfirmForm.controls['confirmPassword'].errors.validateEqual" class="error">Password does not match</p>
+    </ion-item>
+    <div padding>
+      <button ion-button block color="primary" (click)="submit()" [disabled]="!forgotConfirmForm.valid">Update Password</button>
+    </div>
+  </form>
+</ion-content>

@@ -1,6 +1,8 @@
 {
-  "name": "FindJob",
-  "app_id": "236c2223",
-  "integrations": {},
-  "type": "ionic-angular"
+  "name": "Ionic AWS/Cognito App",
+  "app_id": "27de28ec",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

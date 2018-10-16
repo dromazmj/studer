@@ -1,0 +1,14 @@
+<ion-item>
+    <ion-label floating>Phone</ion-label>
+    <ion-select [(ngModel)]="country_code" (ionChange)="onSelect($event)">
+        <ion-option *ngFor="let c of countries" [value]="c.code">
+        {{ c.name }}
+        </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <span item-content padding-right>{{ dial_code }}</span>
+    <ion-input #telinput type="tel" [(ngModel)]="phone_number" [placeholder]="example_number_formatted" [brmasker]="brConfig" 
+              (ionBlur)="onIonBlur($event)" (ionChange)="onIonChange($event)"></ion-input>
+  </ion-item>
+  
